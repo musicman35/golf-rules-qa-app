@@ -1,0 +1,48 @@
+# Core Framework
+streamlit==1.31.0
+
+# Anthropic AI
+anthropic==0.25.0
+
+# Web Scraping
+beautifulsoup4==4.12.3
+requests==2.31.0
+lxml==5.1.0
+selenium==4.18.1  # For dynamic content if needed
+
+# Vector Database & Embeddings
+chromadb==0.4.22
+voyageai==0.2.1  # For embeddings
+sentence-transformers==2.5.1  # Alternative local embeddings
+
+# Database
+sqlite-utils==3.36
+
+# Scheduling
+APScheduler==3.10.4
+
+# Data Processing
+pandas==2.2.0
+numpy==1.26.4
+
+# Environment Variables
+python-dotenv==1.0.1
+
+# Logging & Monitoring
+loguru==0.7.2
+
+# Text Processing
+nltk==3.8.1
+tiktoken==0.6.0  # Token counting for cost tracking
+
+# Utilities
+python-dateutil==2.8.2
+pytz==2024.1
+tqdm==4.66.1  # Progress bars for scraping
+
+# Testing (optional but recommended)
+pytest==8.0.0
+pytest-asyncio==0.23.5
+
+# Setup verification
+colorama==0.4.6
