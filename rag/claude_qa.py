@@ -20,7 +20,7 @@ class ClaudeQASystem:
     Q&A system using Claude with RAG for golf rules questions.
     """
 
-    def __init__(self, model: str = "claude-3-5-sonnet-20241022"):
+    def __init__(self, model: str = "claude-sonnet-4-5-20250929"):
         """
         Initialize Claude Q&A system.
 

@@ -103,20 +103,58 @@ def initialize_session_state():
         st.session_state.updater = None
 
 
+@st.cache_resource
+def init_qa_system():
+    """Initialize QA system with caching."""
+    return get_qa_system()
+
+@st.cache_resource
+def init_db():
+    """Initialize database with caching."""
+    return get_db()
+
+@st.cache_resource
+def init_updater():
+    """Initialize updater with caching."""
+    return get_updater()
+
 def initialize_app():
     """Initialize the application components."""
     if not st.session_state.initialized:
         with st.spinner("Initializing application..."):
             try:
-                # Initialize components
-                st.session_state.db = get_db()
-                st.session_state.updater = get_updater()
+                # Initialize components with caching
+                st.session_state.db = init_db()
+                st.session_state.updater = init_updater()
 
                 # Initialize data if needed (using sample data for quick start)
                 st.session_state.updater.initialize_data(use_sample=True)
 
-                # Initialize QA system
-                st.session_state.qa_system = get_qa_system()
+                # Initialize QA system with better error handling
+                try:
+                    st.session_state.qa_system = init_qa_system()
+                except TypeError as e:
+                    if "proxies" in str(e) or "Client.init()" in str(e):
+                        # Known compatibility issue - provide helpful message
+                        st.error("""
+                        **Compatibility Issue Detected**
+
+                        There's a version mismatch with the httpx library.
+
+                        **Quick Fix:** Run this command in your terminal:
+                        ```bash
+                        pip uninstall httpx -y && pip install httpx==0.27.0
+                        ```
+
+                        Then refresh this page.
+                        """)
+                        st.stop()
+                    else:
+                        raise
+                except Exception as e:
+                    st.error(f"Error initializing QA system: {e}")
+                    logger.error(f"QA system initialization error: {e}")
+                    raise
 
                 st.session_state.initialized = True
                 logger.info("Application initialized successfully")
@@ -201,12 +239,12 @@ def rules_qa_page():
                     if "metrics" in meta:
                         metrics = meta["metrics"]
                         col1, col2, col3 = st.columns(3)
-                        col1.metric("Response Time", f"{metrics['response_time_ms']}ms")
-                        col2.metric("Tokens Used", metrics['total_tokens'])
-                        col3.metric("Cost", f"${metrics['cost_usd']:.4f}")
+                        col1.metric("Response Time", f"{metrics.get('response_time_ms', 0)}ms")
+                        col2.metric("Tokens Used", metrics.get('total_tokens', 0))
+                        col3.metric("Cost", f"${metrics.get('cost_usd', 0):.4f}")
 
                     # Feedback buttons
-                    if "query_id" in meta["metrics"]:
+                    if "metrics" in meta and "query_id" in meta["metrics"]:
                         query_id = meta["metrics"]["query_id"]
                         col1, col2 = st.columns([1, 5])
                         with col1:
